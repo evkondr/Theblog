@@ -1,0 +1,20 @@
+{
+  "name": "theblog",
+  "version": "1.0.0",
+  "description": "This is my first React app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "React",
+    "Node.js",
+    "@hapi",
+    "webpack"
+  ],
+  "author": "Kondratiev Evgeniy <kondratiev.evg@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/hapi": "^19.0.2"
+  }
+}
