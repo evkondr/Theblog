@@ -16,7 +16,9 @@
   "author": "Kondratiev Evgeniy <kondratiev.evg@gmail.com>",
   "license": "ISC",
   "dependencies": {
+    "@hapi/boom": "^9.0.0",
     "@hapi/hapi": "^19.0.2",
+    "@hapi/joi": "^17.0.2",
     "bcryptjs": "^2.4.3",
     "dotenv": "^8.2.0",
     "mongoose": "^5.8.7"

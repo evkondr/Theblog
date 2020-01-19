@@ -1,9 +1,10 @@
 'use strict';
 
-const Hapi = require('@hapi/hapi')
-const routes = require('./src/routes')
-const mongoose = require('mongoose')
-const connectDB = require('./src/db/connection')
+const Hapi = require('@hapi/hapi');
+const routes = require('./src/routes');
+const mongoose = require('mongoose');
+const DB = require('./src/db/connection');
+
 
 
 require('dotenv').config()
@@ -13,35 +14,15 @@ const server = Hapi.server({
     host: process.env.LOCALHOST || 'localhost'
 });
 
-//routes
-server.route([{
-    method: 'GET',
-    path: '/',
-    handler: routes.main
-},
-{
-    method: 'POST',
-    path: '/register',
-    handler: routes.register
-},
-{
-    method: 'POST',
-    path: '/login',
-    handler: routes.login
-}]);
+//routes 
+server.route(routes);
+
 const init = async () => {
-    
     await server.start();
     console.log('Server running on %s', server.info.uri);
 };
 
 process.on('unhandledRejection', (err) => {
-    try{
-        connectDB()
-    }catch(e){
-        console.log(e)
-    }
-
     console.log(err);
     process.exit(1);
 });
