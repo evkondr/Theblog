@@ -27,7 +27,7 @@ module.exports=[{
     handler: handlers.users
 },
 {
-    method: 'DELETE',
-    path: '/delete',
-    handler: handlers.deleteUser
+    method: 'GET',
+    path: '/administrator',
+    handler: handlers.administrator
 }]

@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const userSchema=require('./db/User.schema');
 const User=mongoose.model('User',userSchema);
 const Boom=require('@hapi/boom');
+const  jwt=require('jsonwebtoken');
 
 
 const routes={
@@ -12,29 +13,39 @@ const routes={
     },
     register:async (request,h)=>{
         const {email,password}=request.payload;
-        let uExists=null
+        let uExists=null;
+        let hashedPass;
         await User.findOne({email},(err,user)=>{
             if(err) return console.log(err);
             uExists=user
         });
         if(uExists) return Boom.notAcceptable("User with this email already exists");
-        newUser=new User({email,password})
-        newUser.save();
-        return h.response(`New user ${newUser.email} has beed created`).code(201)
+        bcrypt.genSalt(10, function(err, salt) {
+            bcrypt.hash(password, salt, function(err, hash) {
+                newUser=new User({email,password:hash});
+                newUser.save();
+            });
+        });
+        return h.response(`New user has beed created`).code(201)
     },
     login:async(request,h)=>{
         const {email,password}=request.payload
-
-        for(let i=0;i<users.length;i++){
-            if(users[i].email==email){
-                let isEqual=await bcrypt.compare(password, users[i].password)
-                console.log(isEqual);
-                if(isEqual){
-                    return `Welcome ${users[i].email}`
-                }
-            }
+        let isUser=null;
+        let isEqual=false;
+        await User.findOne({email},(err,user)=>{
+            if(err) return console.log(err);
+            isUser=user;
+            console.log(isUser)
+        });
+        if(!isUser){
+            return Boom.unauthorized('invalid credentials');
         }
-        return `Bad credentials`
+        isEqual=await bcrypt.compare(password, isUser.password)
+        if(!isEqual){
+            return Boom.unauthorized('invalid credentials');
+        }
+        const token=jwt.sign({userId:isUser._id},'secret',{ expiresIn: '1h' })
+        return token;
     },
     users:async(request,h)=>{
         let allUsers=null;
@@ -55,6 +66,9 @@ const routes={
             return Boom.notFound(`User with email ${email} not found`)
         }
         return h.response(`User with email ${email} has been deleted`)
+    },
+    administrator:async(request,h)=>{
+        return "OK"
     }
 }
 module.exports=routes
